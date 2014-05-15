@@ -5,6 +5,7 @@
 (defvar netlogo-mode-map
 (let ((netlogo-mode-map (make-keymap)))
 (define-key netlogo-mode-map "\C-j" 'newline-and-indent)
+(define-key netlogo-mode-map "\C-cf" 'netlogo-goto-function-def-at-point)
 netlogo-mode-map)
 "Keymap for NETLOGO major mode")
 
@@ -40,7 +41,7 @@ netlogo-mode-syntax-table)
 
 ;; define several class of keywords
 (defvar netlogo-logic-keywords
-'("!=" "*" "+" "-" "/" "<" "<=" "=" ">" ">=" "^" "abs" "acos" "all?" "and" "any?" "approximate-hsb" "approximate-rgb" "asin" "at-points" "atan" "autoplot?" "base-colors" "behaviorspace-run-number" "both-ends" "but-first" "but-last" "can-move?" "ceiling" "color" "cos" "count" "date-and-time" "distance" "distancexy" "dx" "dy" "empty?" "end1" "end2" "error-message" "exp" "extract-hsb" "extract-rgb" "file-at-end?" "file-exists?" "file-read" "file-read-characters" "file-read-line" "filter" "first" "floor" "fput" "heading" "hidden?" "hsb" "hubnet-clients-list" "hubnet-enter-message?" "hubnet-exit-message?" "hubnet-message" "hubnet-message-source" "hubnet-message-tag" "hubnet-message-waiting?" "ifelse-value" "in-cone" "in-link-from" "in-link-neighbor?" "in-link-neighbors" "in-radius" "int" "is-agent?" "is-agentset?" "is-command-task?" "is-directed-link?" "is-link-set?" "is-link?" "is-list?" "is-number?" "is-patch-set?" "is-patch?" "is-reporter-task?" "is-string?" "is-turtle-set?" "is-turtle?" "is-undirected-link?" "item" "label" "label-color" "last" "length" "link" "link-heading" "link-length" "link-neighbor?" "link-neighbors" "link-set" "link-shapes" "link-with" "links" "list" "ln" "log" "lput" "map" "max" "max-n-of" "max-one-of" "max-pxcor" "max-pycor" "mean" "median" "member?" "min" "min-n-of" "min-one-of" "min-pxcor" "min-pycor" "mod" "modes" "mouse-down?" "mouse-inside?" "mouse-xcor" "mouse-ycor" "movie-status" "my-in-links" "my-links" "my-out-links" "myself" "n-of" "n-values" "neighbors" "neighbors4" "netlogo-applet?" "netlogo-version" "new-seed" "no-links" "no-patches" "no-turtles" "not" "of" "one-of" "or" "other" "other-end" "out-link-neighbor?" "out-link-neighbors" "out-link-to" "patch" "patch-ahead" "patch-at" "patch-at-heading-and-distance" "patch-here" "patch-left-and-ahead" "patch-right-and-ahead" "patch-set" "patch-size" "patches" "pcolor" "pen-mode" "pen-size" "plabel" "plabel-color" "plot-name" "plot-pen-exists?" "plot-x-max" "plot-x-min" "plot-y-max" "plot-y-min" "position" "precision" "pxcor" "pycor" "random" "random-exponential" "random-float" "random-gamma" "random-normal" "random-poisson" "random-pxcor" "random-pycor" "random-xcor" "random-ycor" "read-from-string" "reduce" "remainder" "remove" "remove-duplicates" "remove-item" "replace-item" "reverse" "rgb" "round" "runresult" "scale-color" "self" "sentence" "shade-of?" "shape" "shapes" "shuffle" "sin" "size" "sort" "sort-by" "sort-on" "sqrt" "standard-deviation" "subject" "sublist" "substring" "subtract-headings" "sum" "tan" "task" "thickness" "ticks" "tie-mode" "timer" "towards" "towardsxy" "turtle" "turtle-set" "turtles" "turtles-at" "turtles-here" "turtles-on" "user-directory" "user-file" "user-input" "user-new-file" "user-one-of" "user-yes-or-no?" "variance" "who" "with" "with-max" "with-min" "word" "world-height" "world-width" "wrap-color" "xcor" "xor" "ycor")
+'("!=" "*" "+" "-" "/" "<" "<=" "=" ">" ">=" "^" "abs" "acos" "all?" "and" "any?" "approximate-hsb" "approximate-rgb" "asin" "at-points" "atan" "autoplot?" "base-colors" "behaviorspace-run-number" "both-ends" "but-first" "but-last" "can-move?" "cieiling" "color" "cos" "count" "date-and-time" "distance" "distancexy" "dx" "dy" "empty?" "end1" "end2" "error-message" "exp" "extract-hsb" "extract-rgb" "file-at-end?" "file-exists?" "file-read" "file-read-characters" "file-read-line" "filter" "first" "floor" "fput" "heading" "hidden?" "hsb" "hubnet-clients-list" "hubnet-enter-message?" "hubnet-exit-message?" "hubnet-message" "hubnet-message-source" "hubnet-message-tag" "hubnet-message-waiting?" "ifelse-value" "in-cone" "in-link-from" "in-link-neighbor?" "in-link-neighbors" "in-radius" "int" "is-agent?" "is-agentset?" "is-command-task?" "is-directed-link?" "is-link-set?" "is-link?" "is-list?" "is-number?" "is-patch-set?" "is-patch?" "is-reporter-task?" "is-string?" "is-turtle-set?" "is-turtle?" "is-undirected-link?" "item" "label" "label-color" "last" "length" "link" "link-heading" "link-length" "link-neighbor?" "link-neighbors" "link-set" "link-shapes" "link-with" "links" "list" "ln" "log" "lput" "map" "max" "max-n-of" "max-one-of" "max-pxcor" "max-pycor" "mean" "median" "member?" "min" "min-n-of" "min-one-of" "min-pxcor" "min-pycor" "mod" "modes" "mouse-down?" "mouse-inside?" "mouse-xcor" "mouse-ycor" "movie-status" "my-in-links" "my-links" "my-out-links" "myself" "n-of" "n-values" "neighbors" "neighbors4" "netlogo-applet?" "netlogo-version" "new-seed" "no-links" "no-patches" "no-turtles" "not" "of" "one-of" "or" "other" "other-end" "out-link-neighbor?" "out-link-neighbors" "out-link-to" "patch" "patch-ahead" "patch-at" "patch-at-heading-and-distance" "patch-here" "patch-left-and-ahead" "patch-right-and-ahead" "patch-set" "patch-size" "patches" "pcolor" "pen-mode" "pen-size" "plabel" "plabel-color" "plot-name" "plot-pen-exists?" "plot-x-max" "plot-x-min" "plot-y-max" "plot-y-min" "position" "precision" "pxcor" "pycor" "random" "random-exponential" "random-float" "random-gamma" "random-normal" "random-poisson" "random-pxcor" "random-pycor" "random-xcor" "random-ycor" "read-from-string" "reduce" "remainder" "remove" "remove-duplicates" "remove-item" "replace-item" "reverse" "rgb" "round" "runresult" "scale-color" "self" "sentence" "shade-of?" "shape" "shapes" "shuffle" "sin" "size" "sort" "sort-by" "sort-on" "sqrt" "standard-deviation" "subject" "sublist" "substring" "subtract-headings" "sum" "tan" "task" "thickness" "ticks" "tie-mode" "timer" "towards" "towardsxy" "turtle" "turtle-set" "turtles" "turtles-at" "turtles-here" "turtles-on" "user-directory" "user-file" "user-input" "user-new-file" "user-one-of" "user-yes-or-no?" "variance" "who" "with" "with-max" "with-min" "word" "world-height" "world-width" "wrap-color" "xcor" "xor" "ycor")
 "NETLOGO keywords.")
 (defvar netlogo-types
 '("__includes" "breed" "directed-link-breed" "end" "extensions" "globals" "links-own" "patches-own" "to" "to-report" "turtles-own" "undirected-link-breed"))
@@ -69,8 +70,6 @@ netlogo-mode-syntax-table)
 (,netlogo-functions-regexp . font-lock-function-name-face)
 (,netlogo-keywords-regexp . font-lock-keyword-face)
 
-
-
 ;; FUNCTION NAMES in declarations
 ;("\\(\\<\\(?:to-report\\|to\\)\\>\\)\s*\\(\\w+\\)\s*\\(\\[\\(\\(\s*?\\<\\w+\\>\s*?\\)+\\)\\]\\)?"
 ; (1 'font-lock-keyword-face)
@@ -96,6 +95,52 @@ netlogo-mode-syntax-table)
 ;; would be highlighted.
 
 ))
+
+(defun netlogo-is-logic-keyword? (keyword)
+  (interactive)
+  (if (member  keyword netlogo-logic-keywords) t nil))
+
+(defun netlogo-is-type? (keyword)
+  (interactive)
+  (if (member keyword netlogo-types) t  nil))
+
+(defun netlogo-is-constant? (keyword)
+  (interactive)
+  (if (member keyword netlogo-constants) t  nil))
+
+(defun netlogo-is-event? (keyword)
+  (interactive)
+  (if (member keyword netlogo-events) t  nil))
+
+(defun netlogo-is-function? (keyword)
+  (interactive)
+  (if (member keyword netlogo-functions) t  nil))
+
+(defun netlogo-is-builtin (keyword)
+  (interactive)
+  (cond 
+   ((netlogo-is-function? keyword) "function")
+   ((netlogo-is-logic-keyword? keyword) "logic keyword")
+   ((netlogo-is-type? keyword) "type")
+   ((netlogo-is-constant? keyword) "constant")
+   ((netlogo-is-event? keyword) "event")))
+
+(defun netlogo-goto-function-def-at-point ()
+"Goes to the definition of the function at point"
+(interactive)
+(let ((function-name (thing-at-point 'word)) (pos (point)) (builtin) (function-pos))
+  (setq builtin (netlogo-is-builtin function-name))
+  (if builtin
+      (message (concat function-name " is a builtin " builtin))
+    (progn
+      (save-excursion
+        (beginning-of-buffer)
+        (setq function-pos
+              (search-forward-regexp (concat "\\(to\\|to-report\\)[[:space:]]+" function-name "[[:space:]\n]") nil t)))
+      (if function-pos
+          ;; subtract one to ignore newline/space following function name
+          (goto-char (1- function-pos))
+        (message (concat "No function definition found for " function-name)))))))
 
 (defun netlogo-mode ()
 "Major mode for editing Workflow Process Description Language files"
