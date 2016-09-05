@@ -2,6 +2,14 @@
 (add-to-list 'auto-mode-alist '("\\.nls\\'" . netlogo-mode))
 (add-to-list 'auto-mode-alist '("\\.nlogo\\'" . netlogo-mode))
 
+
+(defvar netlogo-indent-width 2 "the size of tabs when indenting netlogo code")
+(defvar netlogo-indent-increase-regexp "\\\[\\|\\(^\\|\s\\)to\-report\\|\\(^\\|\s\\)to\
+" "regexp selecting elements that causes an increase in indentation")
+(defvar netlogo-indent-decrease-regexp "\\\]\\|\\(^\\|\s\\)end\\($\\|\s\\)" "regexp
+selecting elements that causes a decrease in indentation")
+
+
 (defvar netlogo-mode-map
   (let ((netlogo-mode-map (make-keymap)))
     (define-key netlogo-mode-map "\C-j" 'newline-and-indent)
@@ -147,6 +155,97 @@
 
 (defconst netlogo-source-separator "@#$#@#$#@")
 
+
+(defun netlogo-indent-change-for-line ()
+  "returns the number of indentation changes for the current-line"
+  (setq netlogo-indent-positive-change 0
+        netlogo-indent-negative-change 0)
+  (save-excursion
+    (beginning-of-line)
+    ;; if line has comment, don't
+    ;; do anything beyond it
+    (setq netlogo-search-end-position
+          (if (search-forward ";" (line-end-position) t)  
+              (point)
+            (line-end-position)))
+    ;; calculate net change for the line
+    (beginning-of-line)
+    (while (re-search-forward netlogo-indent-increase-regexp netlogo-search-end-position t)
+      (setq netlogo-indent-positive-change (1+ netlogo-indent-positive-change)))
+    (beginning-of-line)
+    (while (re-search-forward netlogo-indent-decrease-regexp netlogo-search-end-position t)
+      (setq netlogo-indent-negative-change (1+ netlogo-indent-negative-change))))
+  (*(- netlogo-indent-positive-change netlogo-indent-negative-change) netlogo-indent-width))
+
+
+(defun netlogo-indent-previous-indent ()
+  "gets the indentation at the previous line with content"
+  (if (and (> (count-lines 1 (point)) 0)
+           (save-excursion (beginning-of-line)(re-search-backward
+                                               "^[\s-]*\\(\\w\\|\\]\\|\\[\\)" nil t )))
+      (save-excursion
+        (beginning-of-line)
+        (beginning-of-line)(re-search-backward "^[\s-]*\\(\\w\\|\\]\\|\\[\\)" nil t )
+        (setq netlogo-indent-change (netlogo-indent-change-for-line))
+        (if (>= netlogo-indent-change 0)
+            (+ netlogo-indent-change (current-indentation))
+          (current-indentation)))
+    0))
+
+                                        
+(defun line-has-string (arg)
+  (save-excursion
+    (beginning-of-line)
+    (re-search-forward arg (line-end-position) t)))
+
+(defun netlogo-indent-line (&optional args)
+  "indents current line as netlogo"
+  (interactive (point))
+
+  (setq netlogo-indent-here (netlogo-indent-previous-indent)
+        netlogo-indent-change (netlogo-indent-change-for-line))
+  (if (line-has-string "^[\s-]*;;;")
+      (setq netlogo-indent-here 0
+            netlogo-indent-change -100)
+    (if (line-has-string "^[\s-]*;\\([^;]\\|$\\)")
+        (setq netlogo-indent-here comment-column
+              netlogo-indent-change 0)))
+
+  (save-excursion ; remove 
+    (back-to-indentation)
+    (fixup-whitespace))
+  (save-excursion
+    (back-to-indentation)
+    (if (>= netlogo-indent-change 0) ; positive edge
+        (indent-to netlogo-indent-here)
+      (indent-to (+ netlogo-indent-here netlogo-indent-change)))) ; negative edge
+  (if (= (point) (line-beginning-position))
+      (back-to-indentation)))
+
+
+(defun netlogo-indent-region (start end)
+  "indents current code as netlogo"
+  (interactive (region-beginning) (region-end))
+  (save-excursion 
+    (goto-char start)
+    (setq netlogo-indent-here (netlogo-indent-previous-indent))
+    (while (< (point) end)
+      (if (line-has-string "^[\s-]+;;;")
+          (progn (beginning-of-line) (fixup-whitespace))
+        (if (line-has-string "^[\s-]+;\\([^;]\\|$\\)")
+            (progn(beginning-of-line) (fixup-whitespace) (indent-to comment-column))
+          (progn  
+            (setq netlogo-indent-change (netlogo-indent-change-for-line))
+            (beginning-of-line)
+            (fixup-whitespace)
+            (if (>= netlogo-indent-change 0)
+                (progn ; positive change - applies to next line
+                  (indent-to-column netlogo-indent-here)
+                  (setq netlogo-indent-here (+ netlogo-indent-here netlogo-indent-change)))
+              (progn ; negative change - applied instantly
+                (setq netlogo-indent-here (+ netlogo-indent-here netlogo-indent-change))
+                (indent-to-column netlogo-indent-here))))))
+      (next-line))))
                       
 
 (defun netlogo-mode ()
@@ -161,6 +260,16 @@
 
   ;;(set (make-local-variable 'font-lock-defaults) '(netlogo-font-lock-keywords))
   ;;(set (make-local-variable 'indent-line-function) 'netlogo-indent-line)
+
+  ;; for indentation
+  (make-local-variable 'indent-line-function)
+  (make-local-variable 'indent-region-function)
+  (setq indent-line-function 'netlogo-indent-line)
+  (setq indent-region-function 'netlogo-indent-region)
+
+  ;; for comments
+  (make-local-variable 'comment-start)
+  (setq comment-start ";")
 
   (setq major-mode 'netlogo-mode)
   (setq mode-name "NETLOGO")

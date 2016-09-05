@@ -1,9 +1,10 @@
+
+
+*Forked by Tom Olsson to add indentation to bring it closer to a full-blown mode.*
+Repository for netlogo highlight template on various editor, contribution is welcome!
+
 netlogo-highlight
 =================
-
-Repository for netlogo highlight template on various editor,
-contribution is welcome !
-
 *Emacs installation:* 
 
 Put the file into  ~/.emacs.d/plugin,
