@@ -1,21 +1,28 @@
 
-
-*Forked by Tom Olsson to add indentation to bring it closer to a full-blown mode.*
-
-netlogo-highlight
+netlogo-mode
 =================
 
-Repository for netlogo highlight template on various editor, contribution is welcome!
+Major mode for editing NetLogo .nls and .nlogo files. 
 
-*Emacs installation:* 
+Current feature goals:
 
-Put the file into  ~/.emacs.d/plugin,
+- [X] Indentation (works, but quite slow)
+- [ ] Built-in auto-completion (see [tgolsson/company-netlogo](https://github.com/tgolsson/company-netlogo))
+- [ ] Keyword and function auto-completion 
+  - Some sort of semantic analysis?
 
-Open ```.emacs``` via ```C-x C-f ~/.emacs``` in Emacs, and insert one line of code,
-```(load-file "~/.emacs.d/plugin/netlogo-mode.el")```, into .emacs and save it. 
+## Installation
 
-Restarting Emacs.
+Download `netlogo-mode.el` so it's on your load-path, and add `(require 'netlogo-mode)` to your init-file.
 
-*Credits*
+## Configuration
 
-Thanks to Anbor (mailling list netlogo) for this new improved version of emacs netlogo highlighting file.
+This mode has the following configuration parameters:
+
+- `netlogo-indent-width` - *the number of spaces for each level of indents*
+
+## Credits and contribution
+
+This is a fork from the previous `netlogo-highlight` repositories, which are originally attributed to  Anbor on the Netlogo mailing list.
+
+Contributions are welcome, just make a pull request.
