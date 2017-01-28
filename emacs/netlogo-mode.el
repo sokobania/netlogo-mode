@@ -272,4 +272,4 @@
   (make-local-variable 'comment-start)
   (setq comment-start ";"))
 
-(provide 'netlogo)
+(provide 'netlogo-mode)
