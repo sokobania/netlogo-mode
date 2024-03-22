@@ -180,12 +180,14 @@
   "Go to the definition of FUNCTION-NAME.
 
 When called interactively, go to definition of the function at point."
-  (interactive (list (read-string (concat "Function name (" (thing-at-point 'word) "): "))))
+  (interactive
+   (let ((fun (thing-at-point 'symbol)))
+     (list (read-string (concat "Function name (" fun "): ") nil nil fun))))
   (let ((builtin (netlogo-is-builtin function-name))
         (function-pos))
     (if (or (not function-name)
             (= 0 (length function-name)))
-        (setq function-name (thing-at-point 'word)))
+        (setq function-name (thing-at-point 'symbol)))
     (if builtin
         (message (concat function-name " is a builtin " builtin))
       (progn
