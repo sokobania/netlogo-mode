@@ -35,7 +35,7 @@
 (add-to-list 'auto-mode-alist '("\\.nlogo\\'" . netlogo-mode))
 (add-to-list 'auto-mode-alist '("\\.nlogo3d\\'" . netlogo-mode))
 
-(defcustom netlogo-indent-width 2 "the size of tabs when indenting netlogo code"
+(defcustom netlogo-indent-width 2 "the size of tabs when indenting NetLogo code"
   :type 'integer
   :group 'netlogo-mode)
 
@@ -51,7 +51,7 @@
     (define-key netlogo-mode-map "\C-j" 'newline-and-indent)
     (define-key netlogo-mode-map "\C-cf" 'netlogo-goto-function-def-at-point)
     netlogo-mode-map)
-  "Keymap for NETLOGO major mode")
+  "Keymap for netlogo major mode")
 
 (defvar netlogo-mode-syntax-table
   (let ((netlogo-mode-syntax-table (make-syntax-table)))
@@ -75,10 +75,10 @@
 
     (modify-syntax-entry ?- "w" netlogo-mode-syntax-table)
     (modify-syntax-entry ?( "()" netlogo-mode-syntax-table)
-                         (modify-syntax-entry ?) ")(" netlogo-mode-syntax-table)
+    (modify-syntax-entry ?) ")(" netlogo-mode-syntax-table)
     (modify-syntax-entry ?\; "< b" netlogo-mode-syntax-table)
     (modify-syntax-entry ?[ "(]" netlogo-mode-syntax-table)
-                         (modify-syntax-entry ?] ")[" netlogo-mode-syntax-table)
+    (modify-syntax-entry ?] ")[" netlogo-mode-syntax-table)
     (modify-syntax-entry ?\n "> b" netlogo-mode-syntax-table)
     netlogo-mode-syntax-table)
   "Syntax table for netlogo-mode")
@@ -86,7 +86,7 @@
 ;; define several class of keywords
 (defvar netlogo-logic-keywords
   '("!=" "*" "+" "-" "/" "<" "<=" "=" ">" ">=" "^" "abs" "acos" "all?" "and" "any?" "approximate-hsb" "approximate-rgb" "asin" "at-points" "atan" "autoplot?" "base-colors" "behaviorspace-run-number" "both-ends" "but-first" "but-last" "can-move?" "cieiling" "color" "cos" "count" "date-and-time" "distance" "distancexy" "dx" "dy" "empty?" "end1" "end2" "error-message" "exp" "extract-hsb" "extract-rgb" "file-at-end?" "file-exists?" "file-read" "file-read-characters" "file-read-line" "filter" "first" "floor" "fput" "heading" "hidden?" "hsb" "hubnet-clients-list" "hubnet-enter-message?" "hubnet-exit-message?" "hubnet-message" "hubnet-message-source" "hubnet-message-tag" "hubnet-message-waiting?" "ifelse-value" "in-cone" "in-link-from" "in-link-neighbor?" "in-link-neighbors" "in-radius" "int" "is-agent?" "is-agentset?" "is-command-task?" "is-directed-link?" "is-link-set?" "is-link?" "is-list?" "is-number?" "is-patch-set?" "is-patch?" "is-reporter-task?" "is-string?" "is-turtle-set?" "is-turtle?" "is-undirected-link?" "item" "label" "label-color" "last" "length" "link" "link-heading" "link-length" "link-neighbor?" "link-neighbors" "link-set" "link-shapes" "link-with" "links" "list" "ln" "log" "lput" "map" "max" "max-n-of" "max-one-of" "max-pxcor" "max-pycor" "max-pzcor" "mean" "median" "member?" "min" "min-n-of" "min-one-of" "min-pxcor" "min-pycor" "min-pzcor" "mod" "modes" "mouse-down?" "mouse-inside?" "mouse-xcor" "mouse-ycor" "mouse-zcor" "movie-status" "my-in-links" "my-links" "my-out-links" "myself" "n-of" "n-values" "neighbors" "neighbors4" "netlogo-applet?" "netlogo-version" "new-seed" "no-links" "no-patches" "no-turtles" "not" "of" "one-of" "or" "other" "other-end" "out-link-neighbor?" "out-link-neighbors" "out-link-to" "patch" "patch-ahead" "patch-at" "patch-at-heading-and-distance" "patch-here" "patch-left-and-ahead" "patch-right-and-ahead" "patch-set" "patch-size" "patches" "pcolor" "pen-mode" "pen-size" "plabel" "plabel-color" "plot-name" "plot-pen-exists?" "plot-x-max" "plot-x-min" "plot-y-max" "plot-y-min" "position" "precision" "pxcor" "pycor" "pzcor" "random" "random-exponential" "random-float" "random-gamma" "random-normal" "random-poisson" "random-pxcor" "random-pycor" "random-pzcor" "random-xcor" "random-ycor" "random-zcor" "read-from-string" "reduce" "remainder" "remove" "remove-duplicates" "remove-item" "replace-item" "reverse" "rgb" "round" "runresult" "scale-color" "self" "sentence" "shade-of?" "shape" "shapes" "shuffle" "sin" "size" "sort" "sort-by" "sort-on" "sqrt" "standard-deviation" "subject" "sublist" "substring" "subtract-headings" "sum" "tan" "task" "thickness" "ticks" "tie-mode" "timer" "towards" "towardsxy" "turtle" "turtle-set" "turtles" "turtles-at" "turtles-here" "turtles-on" "user-directory" "user-file" "user-input" "user-new-file" "user-one-of" "user-yes-or-no?" "variance" "who" "with" "with-max" "with-min" "word" "world-height" "world-width" "wrap-color" "xcor" "xor" "ycor" "zcor")
-  "NETLOGO keywords.")
+  "NetLogo keywords.")
 (defvar netlogo-types
   '("__includes" "breed" "directed-link-breed" "end" "extensions" "globals" "links-own" "patches-own" "to" "to-report" "turtles-own" "undirected-link-breed"))
 (defvar netlogo-constants
@@ -233,7 +233,7 @@
     (re-search-forward arg (line-end-position) t)))
 
 (defun netlogo-indent-line (&optional args)
-  "indents current line as netlogo"
+  "indents current line as NetLogo"
   (interactive (point))
   (setq netlogo-indent-here (netlogo-indent-previous-indent)
         netlogo-indent-change (netlogo-indent-change-for-line))
@@ -257,7 +257,7 @@
 
 
 (defun netlogo-indent-region (start end)
-  "indents current code as netlogo"
+  "indents current code as NetLogo"
   (interactive (region-beginning) (region-end))
   (save-excursion
     (goto-char start)
