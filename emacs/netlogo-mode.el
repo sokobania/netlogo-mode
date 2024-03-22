@@ -1,3 +1,31 @@
+;;; netlogo-mode.el --- Major mode for editing NetLogo source files  -*- lexical-binding: t -*-
+;;
+;; Author:
+;; Version: 2.0
+;; Package-Version:
+;; URL: https://github.com/sokobania/netlogo-mode
+
+;;;; MetaData
+;;   :PROPERTIES:
+;;   :copyright:
+;;   :copyright-years:
+;;   :version:  2.0
+;;   :licence:  GPL 2 or later (free software)
+;;   :licence-url: http://www.gnu.org/licenses/
+;;   :part-of-emacs: no
+;;   :author:
+;;   :author_email:
+;;   :inspiration: reyman/netlogo-highlight grusell/netlogo-highlight tgolsson/netlogo-mode
+;;   :keywords: emacs
+;;   :git-repo: https://github.com/sokobania/netlogo-mode
+;;   :git-clone:
+;;   :END:
+
+;;; Commentary:
+;; Major mode for editing NetLogo .nls and .nlogo files.
+
+;;; Code:
+
 (defgroup netlogo-mode nil
   "Major mode for NetLogo")
 (defvar netlogo-mode-hook nil)
@@ -253,6 +281,7 @@
       (next-line))))
                       
 
+;;;###autoload
 (define-derived-mode netlogo-mode prog-mode "NetLogo"
               "Major mode for editing NetLogo files"
               :group 'netlogo
@@ -273,3 +302,4 @@
   (setq comment-start ";"))
 
 (provide 'netlogo-mode)
+;;; netlogo-mode.el ends here
