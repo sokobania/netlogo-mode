@@ -27,7 +27,8 @@
 ;;; Code:
 
 (defgroup netlogo-mode nil
-  "Major mode for editing NetLogo files.")
+  "Major mode for editing NetLogo files."
+  :group 'languages)
 
 (defvar netlogo-mode-hook nil)
 
@@ -75,11 +76,11 @@
     (modify-syntax-entry ?> "." netlogo-mode-syntax-table)
 
     (modify-syntax-entry ?- "w" netlogo-mode-syntax-table)
-    (modify-syntax-entry ?( "()" netlogo-mode-syntax-table)
-    (modify-syntax-entry ?) ")(" netlogo-mode-syntax-table)
+    (modify-syntax-entry ?\( "()" netlogo-mode-syntax-table)
+    (modify-syntax-entry ?\) ")(" netlogo-mode-syntax-table)
     (modify-syntax-entry ?\; "< b" netlogo-mode-syntax-table)
-    (modify-syntax-entry ?[ "(]" netlogo-mode-syntax-table)
-    (modify-syntax-entry ?] ")[" netlogo-mode-syntax-table)
+    (modify-syntax-entry ?\[ "(]" netlogo-mode-syntax-table)
+    (modify-syntax-entry ?\] ")[" netlogo-mode-syntax-table)
     (modify-syntax-entry ?\n "> b" netlogo-mode-syntax-table)
     netlogo-mode-syntax-table)
   "Syntax table for netlogo-mode.")
@@ -103,12 +104,12 @@
 (defvar netlogo-functions-regexp (regexp-opt netlogo-functions 'words))
 (defvar netlogo-keywords-regexp (regexp-opt netlogo-logic-keywords 'words))
 
-(setq netlogo-keywords-breeds-left "own\\|at\\|here\\|on")
-(setq netlogo-keywords-breeds-right "create\\|create-ordered\\|hatch\\|sprout\\|is\\|at\\|here\\|on")
+(defvar netlogo-keywords-breeds-left "own\\|at\\|here\\|on")
+(defvar netlogo-keywords-breeds-right "create\\|create-ordered\\|hatch\\|sprout\\|is\\|at\\|here\\|on")
 
 ;; Create the list for font-lock.
 ;; Each class of keyword is given a particular face.
-(setq netlogo-font-lock-keywords
+(defvar netlogo-font-lock-keywords
   `((,netlogo-types-regexp . font-lock-type-face)
     (,netlogo-constants-regexp . font-lock-constant-face)
     (,netlogo-events-regexp . font-lock-builtin-face)
@@ -139,6 +140,12 @@
     ;; otherwise the keyword "state" in the function "state_entry"
     ;; would be highlighted.
     ))
+
+(defvar netlogo-indent-positive-change 0)
+(defvar netlogo-indent-negative-change 0)
+(defvar netlogo-search-end-position 0)
+(defvar netlogo-indent-change 0)
+(defvar netlogo-indent-here 0)
 
 (defun netlogo-is-logic-keyword? (keyword)
   (interactive)
