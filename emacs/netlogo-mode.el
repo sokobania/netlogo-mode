@@ -24,6 +24,8 @@
 ;;; Commentary:
 ;; Major mode for editing NetLogo .nls and .nlogo files.
 
+;;; :TODO: 240322 Add a customizable user option to prevent empty lines to be indented.
+
 ;;; Code:
 
 (defgroup netlogo-mode nil
