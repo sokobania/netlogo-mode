@@ -177,10 +177,12 @@
    ((netlogo-is-event? keyword) "event")))
 
 (defun netlogo-goto-function-def-at-point (function-name)
-  "Go to the definition of the function at point."
+  "Go to the definition of FUNCTION-NAME.
+
+When called interactively, go to definition of the function at point."
   (interactive (list (read-string (concat "Function name (" (thing-at-point 'word) "): "))))
-  (let ((pos (point)) (builtin) (function-pos))
-    (setq builtin (netlogo-is-builtin function-name))
+  (let ((builtin (netlogo-is-builtin function-name))
+        (function-pos))
     (if (or (not function-name)
             (= 0 (length function-name)))
         (setq function-name (thing-at-point 'word)))
@@ -188,7 +190,7 @@
         (message (concat function-name " is a builtin " builtin))
       (progn
         (save-excursion
-          (beginning-of-buffer)
+          (goto-char (point-min))
           (setq function-pos
                 (search-forward-regexp (concat "\\(to\\|to-report\\)[[:space:]]+" function-name "[[:space:]\n]") nil t)))
         (if function-pos
@@ -289,7 +291,7 @@ Called from a program, START and END specify the region to indent."
               (progn ; negative change - applied instantly
                 (setq netlogo-indent-here (+ netlogo-indent-here netlogo-indent-change))
                 (indent-to-column netlogo-indent-here))))))
-      (next-line))))
+      (forward-line))))
 
 
 ;;;###autoload
