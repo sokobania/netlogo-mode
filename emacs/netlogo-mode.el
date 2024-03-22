@@ -134,7 +134,7 @@
     ;;FIXME : Ne marche pas encore ...
     (,(concat "\\(\\<\\w+-\\(?:" netlogo-keywords-breeds-left "\\)\\>\\)")
      (1 'font-lock-keyword-face))
-    (,(concat "\\(\\<\\(?:"netlogo-keywords-breeds-right "\\)-\\w+\\>\\)")
+    (,(concat "\\(\\<\\(?:" netlogo-keywords-breeds-right "\\)-\\w+\\>\\)")
      (1 'font-lock-keyword-face))
     ;; note: order above matters. "mylsl-keywords-regexp" goes last because
     ;; otherwise the keyword "state" in the function "state_entry"
@@ -148,27 +148,27 @@
 (defvar netlogo-indent-here 0)
 
 (defun netlogo-is-logic-keyword? (keyword)
-  (interactive)
-  (if (member  keyword netlogo-logic-keywords) t nil))
+  "Return T if KEYWORD is a logic keyword."
+  (if (member keyword netlogo-logic-keywords) t nil))
 
 (defun netlogo-is-type? (keyword)
-  (interactive)
+  "Return T if KEYWORD is a type."
   (if (member keyword netlogo-types) t  nil))
 
 (defun netlogo-is-constant? (keyword)
-  (interactive)
+  "Return T if KEYWORD is a constant."
   (if (member keyword netlogo-constants) t  nil))
 
 (defun netlogo-is-event? (keyword)
-  (interactive)
+  "Return T if KEYWORD is an event."
   (if (member keyword netlogo-events) t  nil))
 
 (defun netlogo-is-function? (keyword)
-  (interactive)
+  "Return T if KEYWORD is a function."
   (if (member keyword netlogo-functions) t  nil))
 
 (defun netlogo-is-builtin (keyword)
-  (interactive)
+  "Return the type of KEYWORD as a string."
   (cond
    ((netlogo-is-function? keyword) "function")
    ((netlogo-is-logic-keyword? keyword) "logic keyword")
@@ -243,7 +243,7 @@
 
 (defun netlogo-indent-line (&optional args)
   "Indent current line as NetLogo code."
-  (interactive (point))
+  (interactive)
   (setq netlogo-indent-here (netlogo-indent-previous-indent)
         netlogo-indent-change (netlogo-indent-change-for-line))
   (if (line-has-string "^[\s-]*;;;")
@@ -266,8 +266,10 @@
 
 
 (defun netlogo-indent-region (start end)
-  "Indent current region as NetLogo code."
-  (interactive (region-beginning) (region-end))
+  "Indent current region as NetLogo code.
+
+Called from a program, START and END specify the region to indent."
+  (interactive "r")
   (save-excursion
     (goto-char start)
     (setq netlogo-indent-here (netlogo-indent-previous-indent))
