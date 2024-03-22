@@ -28,6 +28,7 @@
 
 (defgroup netlogo-mode nil
   "Major mode for NetLogo")
+
 (defvar netlogo-mode-hook nil)
 
 (add-to-list 'auto-mode-alist '("\\.nls\\'" . netlogo-mode))
@@ -41,6 +42,7 @@
 (defvar netlogo-indent-increase-regexp
   "\\\[\\|\\(^\\|\s\\)to\-report\\|\\(^\\|\s\\)to"
   "regexp selecting elements that causes an increase in indentation")
+
 (defvar netlogo-indent-decrease-regexp "\\\]\\|\\(^\\|\s\\)end\\($\\|\s\\)"
   "regexp selecting elements that causes a decrease in indentation")
 
@@ -59,7 +61,7 @@
 
     ;; Operators (punctuation)
     (modify-syntax-entry ?+ "." netlogo-mode-syntax-table)
-                                        ;(modify-syntax-entry ?- "." netlogo-mode-syntax-table)
+    ;;(modify-syntax-entry ?- "." netlogo-mode-syntax-table)
     (modify-syntax-entry ?* "." netlogo-mode-syntax-table)
     (modify-syntax-entry ?/ "." netlogo-mode-syntax-table)
     (modify-syntax-entry ?% "." netlogo-mode-syntax-table)
@@ -73,10 +75,10 @@
 
     (modify-syntax-entry ?- "w" netlogo-mode-syntax-table)
     (modify-syntax-entry ?( "()" netlogo-mode-syntax-table)
-    (modify-syntax-entry ?) ")(" netlogo-mode-syntax-table)
+                         (modify-syntax-entry ?) ")(" netlogo-mode-syntax-table)
     (modify-syntax-entry ?\; "< b" netlogo-mode-syntax-table)
     (modify-syntax-entry ?[ "(]" netlogo-mode-syntax-table)
-    (modify-syntax-entry ?] ")[" netlogo-mode-syntax-table)
+                         (modify-syntax-entry ?] ")[" netlogo-mode-syntax-table)
     (modify-syntax-entry ?\n "> b" netlogo-mode-syntax-table)
     netlogo-mode-syntax-table)
   "Syntax table for netlogo-mode")
@@ -105,38 +107,36 @@
 ;; create the list for font-lock.
 ;; each class of keyword is given a particular face
 (setq netlogo-font-lock-keywords
-      `(
-        (,netlogo-types-regexp . font-lock-type-face)
-        (,netlogo-constants-regexp . font-lock-constant-face)
-        (,netlogo-events-regexp . font-lock-builtin-face)
-        (,netlogo-functions-regexp . font-lock-function-name-face)
-        (,netlogo-keywords-regexp . font-lock-keyword-face)
+  `((,netlogo-types-regexp . font-lock-type-face)
+    (,netlogo-constants-regexp . font-lock-constant-face)
+    (,netlogo-events-regexp . font-lock-builtin-face)
+    (,netlogo-functions-regexp . font-lock-function-name-face)
+    (,netlogo-keywords-regexp . font-lock-keyword-face)
 
-        ;; FUNCTION NAMES in declarations
-                                        ;("\\(\\<\\(?:to-report\\|to\\)\\>\\)\s*\\(\\w+\\)\s*\\(\\[\\(\\(\s*?\\<\\w+\\>\s*?\\)+\\)\\]\\)?"
-                                        ; (1 'font-lock-keyword-face)
-                                        ; (2 'font-lock-function-name-face)
-                                        ; (3 'font-lock-variable-name-face)
-                                        ; )
+    ;; FUNCTION NAMES in declarations
+    ;;("\\(\\<\\(?:to-report\\|to\\)\\>\\)\s*\\(\\w+\\)\s*\\(\\[\\(\\(\s*?\\<\\w+\\>\s*?\\)+\\)\\]\\)?"
+    ;; (1 'font-lock-keyword-face)
+    ;; (2 'font-lock-function-name-face)
+    ;; (3 'font-lock-variable-name-face)
+    ;; )
 
-        ;; ASK
-        ("\\(\\<ask\\>\\)\s*\\(\\w+\\)\s*\\(with\s*\\[\\w+\\]\\)?"
-         ;; (1 'font-lock-keyword-face)
-         ;; (2 'font-lock-function-name-face)
-         ;; (3 'font-lock-variable-name-face)
-         )
+    ;; ASK
+    ("\\(\\<ask\\>\\)\s*\\(\\w+\\)\s*\\(with\s*\\[\\w+\\]\\)?"
+     ;; (1 'font-lock-keyword-face)
+     ;; (2 'font-lock-function-name-face)
+     ;; (3 'font-lock-variable-name-face)
+     )
 
-        ;;METHOD PARAM definition
-        ;;FIXME : Ne marche pas encore ...
-        (,(concat "\\(\\<\\w+-\\(?:" netlogo-keywords-breeds-left "\\)\\>\\)")
-         (1 'font-lock-keyword-face))
-        (,(concat "\\(\\<\\(?:"netlogo-keywords-breeds-right"\\)-\\w+\\>\\)")
-         (1 'font-lock-keyword-face))
-        ;; note: order above matters. "mylsl-keywords-regexp" goes last because
-        ;; otherwise the keyword "state" in the function "state_entry"
-        ;; would be highlighted.
-
-        ))
+    ;;METHOD PARAM definition
+    ;;FIXME : Ne marche pas encore ...
+    (,(concat "\\(\\<\\w+-\\(?:" netlogo-keywords-breeds-left "\\)\\>\\)")
+     (1 'font-lock-keyword-face))
+    (,(concat "\\(\\<\\(?:"netlogo-keywords-breeds-right"\\)-\\w+\\>\\)")
+     (1 'font-lock-keyword-face))
+    ;; note: order above matters. "mylsl-keywords-regexp" goes last because
+    ;; otherwise the keyword "state" in the function "state_entry"
+    ;; would be highlighted.
+    ))
 
 (defun netlogo-is-logic-keyword? (keyword)
   (interactive)
@@ -169,7 +169,7 @@
 
 (defun netlogo-goto-function-def-at-point (function-name)
   "Goes to the definition of the function at point"
-  (interactive (list (read-string (concat "Function name (" (thing-at-point 'word) "): " ))))
+  (interactive (list (read-string (concat "Function name (" (thing-at-point 'word) "): "))))
   (let ((pos (point)) (builtin) (function-pos))
     (setq builtin (netlogo-is-builtin function-name))
     (if (or (not function-name)
@@ -208,17 +208,18 @@
     (beginning-of-line)
     (while (re-search-forward netlogo-indent-decrease-regexp netlogo-search-end-position t)
       (setq netlogo-indent-negative-change (1+ netlogo-indent-negative-change))))
-  (*(- netlogo-indent-positive-change netlogo-indent-negative-change) netlogo-indent-width))
+  (* (- netlogo-indent-positive-change netlogo-indent-negative-change) netlogo-indent-width))
 
 
 (defun netlogo-indent-previous-indent ()
   "gets the indentation at the previous line with content"
   (if (and (> (count-lines 1 (point)) 0)
-           (save-excursion (beginning-of-line)(re-search-backward
-                                               "^[\s-]*\\(\\w\\|\\]\\|\\[\\)" nil t )))
+           (save-excursion (beginning-of-line)
+                           (re-search-backward "^[\s-]*\\(\\w\\|\\]\\|\\[\\)" nil t)))
       (save-excursion
         (beginning-of-line)
-        (beginning-of-line)(re-search-backward "^[\s-]*\\(\\w\\|\\]\\|\\[\\)" nil t )
+        (beginning-of-line)
+        (re-search-backward "^[\s-]*\\(\\w\\|\\]\\|\\[\\)" nil t)
         (setq netlogo-indent-change (netlogo-indent-change-for-line))
         (if (>= netlogo-indent-change 0)
             (+ netlogo-indent-change (current-indentation))
@@ -234,7 +235,6 @@
 (defun netlogo-indent-line (&optional args)
   "indents current line as netlogo"
   (interactive (point))
-
   (setq netlogo-indent-here (netlogo-indent-previous-indent)
         netlogo-indent-change (netlogo-indent-change-for-line))
   (if (line-has-string "^[\s-]*;;;")
@@ -266,7 +266,7 @@
       (if (line-has-string "^[\s-]+;;;")
           (progn (beginning-of-line) (fixup-whitespace))
         (if (line-has-string "^[\s-]+;\\([^;]\\|$\\)")
-            (progn(beginning-of-line) (fixup-whitespace) (indent-to comment-column))
+            (progn (beginning-of-line) (fixup-whitespace) (indent-to comment-column))
           (progn
             (setq netlogo-indent-change (netlogo-indent-change-for-line))
             (beginning-of-line)
@@ -283,8 +283,8 @@
 
 ;;;###autoload
 (define-derived-mode netlogo-mode prog-mode "NetLogo"
-              "Major mode for editing NetLogo files"
-              :group 'netlogo
+  "Major mode for editing NetLogo files"
+  :group 'netlogo
   ;; code for syntax highlighting
   (setq font-lock-defaults '((netlogo-font-lock-keywords)))
 
