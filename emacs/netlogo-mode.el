@@ -27,7 +27,7 @@
 ;;; Code:
 
 (defgroup netlogo-mode nil
-  "Major mode for NetLogo")
+  "Major mode for editing NetLogo files.")
 
 (defvar netlogo-mode-hook nil)
 
@@ -35,16 +35,17 @@
 (add-to-list 'auto-mode-alist '("\\.nlogo\\'" . netlogo-mode))
 (add-to-list 'auto-mode-alist '("\\.nlogo3d\\'" . netlogo-mode))
 
-(defcustom netlogo-indent-width 2 "the size of tabs when indenting NetLogo code"
+(defcustom netlogo-indent-width 2
+  "The indentation width (size of tabs) when indenting NetLogo code."
   :type 'integer
   :group 'netlogo-mode)
 
 (defvar netlogo-indent-increase-regexp
   "\\\[\\|\\(^\\|\s\\)to\-report\\|\\(^\\|\s\\)to"
-  "regexp selecting elements that causes an increase in indentation")
+  "Regexp selecting elements that cause an increase in indentation.")
 
 (defvar netlogo-indent-decrease-regexp "\\\]\\|\\(^\\|\s\\)end\\($\\|\s\\)"
-  "regexp selecting elements that causes a decrease in indentation")
+  "Regexp selecting elements that cause a decrease in indentation.")
 
 (defvar netlogo-mode-map
   (let ((netlogo-mode-map (make-keymap)))
@@ -81,7 +82,7 @@
     (modify-syntax-entry ?] ")[" netlogo-mode-syntax-table)
     (modify-syntax-entry ?\n "> b" netlogo-mode-syntax-table)
     netlogo-mode-syntax-table)
-  "Syntax table for netlogo-mode")
+  "Syntax table for netlogo-mode.")
 
 ;; define several class of keywords
 (defvar netlogo-logic-keywords
@@ -131,7 +132,7 @@
     ;;FIXME : Ne marche pas encore ...
     (,(concat "\\(\\<\\w+-\\(?:" netlogo-keywords-breeds-left "\\)\\>\\)")
      (1 'font-lock-keyword-face))
-    (,(concat "\\(\\<\\(?:"netlogo-keywords-breeds-right"\\)-\\w+\\>\\)")
+    (,(concat "\\(\\<\\(?:"netlogo-keywords-breeds-right "\\)-\\w+\\>\\)")
      (1 'font-lock-keyword-face))
     ;; note: order above matters. "mylsl-keywords-regexp" goes last because
     ;; otherwise the keyword "state" in the function "state_entry"
@@ -168,7 +169,7 @@
    ((netlogo-is-event? keyword) "event")))
 
 (defun netlogo-goto-function-def-at-point (function-name)
-  "Goes to the definition of the function at point"
+  "Go to the definition of the function at point."
   (interactive (list (read-string (concat "Function name (" (thing-at-point 'word) "): "))))
   (let ((pos (point)) (builtin) (function-pos))
     (setq builtin (netlogo-is-builtin function-name))
@@ -190,7 +191,7 @@
 (defconst netlogo-source-separator "@#$#@#$#@")
 
 (defun netlogo-indent-change-for-line ()
-  "returns the number of indentation changes for the current-line"
+  "Return the number of indentation changes for the current line."
   (setq netlogo-indent-positive-change 0
         netlogo-indent-negative-change 0)
   (save-excursion
@@ -212,7 +213,7 @@
 
 
 (defun netlogo-indent-previous-indent ()
-  "gets the indentation at the previous line with content"
+  "Return the indentation at the previous line with content."
   (if (and (> (count-lines 1 (point)) 0)
            (save-excursion (beginning-of-line)
                            (re-search-backward "^[\s-]*\\(\\w\\|\\]\\|\\[\\)" nil t)))
@@ -233,7 +234,7 @@
     (re-search-forward arg (line-end-position) t)))
 
 (defun netlogo-indent-line (&optional args)
-  "indents current line as NetLogo"
+  "Indent current line as NetLogo code."
   (interactive (point))
   (setq netlogo-indent-here (netlogo-indent-previous-indent)
         netlogo-indent-change (netlogo-indent-change-for-line))
@@ -257,7 +258,7 @@
 
 
 (defun netlogo-indent-region (start end)
-  "indents current code as NetLogo"
+  "Indent current region as NetLogo code."
   (interactive (region-beginning) (region-end))
   (save-excursion
     (goto-char start)
@@ -283,7 +284,7 @@
 
 ;;;###autoload
 (define-derived-mode netlogo-mode prog-mode "NetLogo"
-  "Major mode for editing NetLogo files"
+  "Major mode for editing NetLogo files."
   :group 'netlogo
   ;; code for syntax highlighting
   (setq font-lock-defaults '((netlogo-font-lock-keywords)))
