@@ -229,7 +229,6 @@ When called interactively, go to definition of the function at point."
                            (re-search-backward "^[\s-]*\\(\\w\\|\\]\\|\\[\\)" nil t)))
       (save-excursion
         (beginning-of-line)
-        (beginning-of-line)
         (re-search-backward "^[\s-]*\\(\\w\\|\\]\\|\\[\\)" nil t)
         (setq netlogo-indent-change (netlogo-indent-change-for-line))
         (if (>= netlogo-indent-change 0)
