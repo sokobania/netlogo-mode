@@ -185,9 +185,9 @@ When called interactively, go to definition of the function at point."
      (list (read-string (concat "Function name (" fun "): ") nil nil fun))))
   (let ((builtin (netlogo-is-builtin function-name))
         (function-pos))
-    (if (or (not function-name)
-            (= 0 (length function-name)))
-        (setq function-name (thing-at-point 'symbol)))
+    (when (or (null function-name)
+              (= 0 (length function-name)))
+      (setq function-name (thing-at-point 'symbol)))
     (if builtin
         (message (concat function-name " is a builtin " builtin))
       (progn
@@ -250,13 +250,13 @@ When called interactively, go to definition of the function at point."
   (interactive)
   (setq netlogo-indent-here (netlogo-indent-previous-indent)
         netlogo-indent-change (netlogo-indent-change-for-line))
-  (if (line-has-string "^[\s-]*;;;")
-      (setq netlogo-indent-here 0
-            netlogo-indent-change -100)
-    (if (line-has-string "^[\s-]*;\\([^;]\\|$\\)")
-        (setq netlogo-indent-here comment-column
-              netlogo-indent-change 0)))
-
+  (cond
+   ((line-has-string "^[\s-]*;;;")
+    (setq netlogo-indent-here 0
+          netlogo-indent-change -100))
+   ((line-has-string "^[\s-]*;\\([^;]\\|$\\)")
+    (setq netlogo-indent-here comment-column
+          netlogo-indent-change 0)))
   (save-excursion ; remove
     (back-to-indentation)
     (fixup-whitespace))
@@ -265,8 +265,8 @@ When called interactively, go to definition of the function at point."
     (if (>= netlogo-indent-change 0) ; positive edge
         (indent-to netlogo-indent-here)
       (indent-to (+ netlogo-indent-here netlogo-indent-change)))) ; negative edge
-  (if (= (point) (line-beginning-position))
-      (back-to-indentation)))
+  (when (= (point) (line-beginning-position))
+    (back-to-indentation)))
 
 
 (defun netlogo-indent-region (start end)
@@ -278,21 +278,25 @@ Called from a program, START and END specify the region to indent."
     (goto-char start)
     (setq netlogo-indent-here (netlogo-indent-previous-indent))
     (while (< (point) end)
-      (if (line-has-string "^[\s-]+;;;")
-          (progn (beginning-of-line) (fixup-whitespace))
-        (if (line-has-string "^[\s-]+;\\([^;]\\|$\\)")
-            (progn (beginning-of-line) (fixup-whitespace) (indent-to comment-column))
-          (progn
-            (setq netlogo-indent-change (netlogo-indent-change-for-line))
-            (beginning-of-line)
-            (fixup-whitespace)
-            (if (>= netlogo-indent-change 0)
-                (progn ; positive change - applies to next line
-                  (indent-to-column netlogo-indent-here)
-                  (setq netlogo-indent-here (+ netlogo-indent-here netlogo-indent-change)))
-              (progn ; negative change - applied instantly
-                (setq netlogo-indent-here (+ netlogo-indent-here netlogo-indent-change))
-                (indent-to-column netlogo-indent-here))))))
+      (cond
+       ((line-has-string "^[\s-]+;;;")
+        (beginning-of-line)
+        (fixup-whitespace))
+       ((line-has-string "^[\s-]+;\\([^;]\\|$\\)")
+        (beginning-of-line)
+        (fixup-whitespace)
+        (indent-to comment-column))
+       (t
+        (setq netlogo-indent-change (netlogo-indent-change-for-line))
+        (beginning-of-line)
+        (fixup-whitespace)
+        (if (>= netlogo-indent-change 0)
+            (progn ; positive change - applies to next line
+              (indent-to-column netlogo-indent-here)
+              (setq netlogo-indent-here (+ netlogo-indent-here netlogo-indent-change)))
+          ;; negative change - applied instantly
+          (setq netlogo-indent-here (+ netlogo-indent-here netlogo-indent-change))
+          (indent-to-column netlogo-indent-here))))
       (forward-line))))
 
 
