@@ -190,15 +190,14 @@ When called interactively, go to definition of the function at point."
       (setq function-name (thing-at-point 'symbol)))
     (if builtin
         (message (concat function-name " is a builtin " builtin))
-      (progn
-        (save-excursion
-          (goto-char (point-min))
-          (setq function-pos
-                (search-forward-regexp (concat "\\(to\\|to-report\\)[[:space:]]+" function-name "[[:space:]\n]") nil t)))
-        (if function-pos
-            ;; subtract one to ignore newline/space following function name
-            (goto-char (1- function-pos))
-          (message (concat "No function definition found for " function-name)))))))
+      (save-excursion
+        (goto-char (point-min))
+        (setq function-pos
+              (search-forward-regexp (concat "\\(to\\|to-report\\)[[:space:]]+\\(" function-name "\\)[[:space:]\n]") nil t)))
+      (if function-pos
+          ;; move the point to the beginning of the function name
+          (goto-char (match-beginning 2))
+        (message (concat "No function definition found for " function-name))))))
 
 (defconst netlogo-source-separator "@#$#@#$#@")
 
